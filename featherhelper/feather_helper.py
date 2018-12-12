@@ -103,7 +103,7 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
     elif _name in _exc:
         raise FeatherHelperError()
 
-    cwd = p.join(_dir, _name)
+    cwd = p.join(_dir, _name + POSTFIX)
     if not p.isdir(cwd):
         raise FeatherHelperError()
 
