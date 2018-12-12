@@ -13,14 +13,14 @@ Feather Helper is a concise interface to cache 2D numpy arrays and pandas datafr
 
 # Install
 
-**_Via conda_** (should be `"pip>=10.0.1"` and `"conda>=4.5.4"`):
+Via conda (should be `"pip>=10.0.1"` and `"conda>=4.5.4"`):
 
 ```
 conda install -c defaults -c conda-forge numpy pandas feather-format
 pip install featherhelper
 ```
 
-**_Via pip_**:
+Via pip:
 
 ```
 pip install featherhelper
