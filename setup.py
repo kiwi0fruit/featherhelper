@@ -37,5 +37,5 @@ setup(
     # keywords='sample setuptools development',
     packages=find_packages(exclude=['docs', 'tests']),
 
-    install_requires=['numpy', 'pandas', 'feather-format'],
+    install_requires=['numpy', 'pandas', 'feather-format>=0.4.0', 'pyarrow>=0.11.1'],
 )
