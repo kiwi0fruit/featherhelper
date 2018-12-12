@@ -66,16 +66,13 @@ class FeatherHelperError(Exception):
     pass
 
 
-def push(*data_frames: Union[np.ndarray, pd.DataFrame], e: Exception=''):
+def push(*data_frames: Union[np.ndarray, pd.DataFrame]):
     """
-    Stores data frames or arrays. Prints exception ``e`` if it's not empty.
+    Stores data frames or arrays.
     """
     global _name, _dir
     if _name is None:
         name()
-
-    if str(e):
-        print(e)
 
     for i, df in enumerate(data_frames):
         if isinstance(df, np.ndarray):
@@ -120,7 +117,7 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
         elif dot_ext == '.df':
             ret.append(df)
         else:
-            raise FeatherHelperError('Wrong file ext in {}'.format(cwd))
+            raise FeatherHelperError()
     if not ret or (len(ret) != ret_len and ret_len):
         raise FeatherHelperError()
 

@@ -39,14 +39,15 @@ fh.setdir("~/feather/mydoc")  # (optional)
 # %%
 fh.name(1)  # can also be fh.name('id1'), default is 'default', 1 is the same as '1'
 try:
+    # raise fh.Err  # (optional)
     df, A = fh.pull()  # control length can be set: fh.pull(N)
-except Exception as e:
-    # calculate stuff:
+except fh.Err:
+    # calculate:
     print('push')  
     df = pd.DataFrame(np.random.random(16).reshape(4, 4))
     A = df.values
     #
-    fh.push(df, A, e=e)
+    fh.push(df, A)
 
 print(df, '\n', A)
 ```
