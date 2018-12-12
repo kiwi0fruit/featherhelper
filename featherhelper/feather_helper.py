@@ -4,6 +4,9 @@ from os import path as p
 import feather
 import numpy as np
 from typing import Union, List
+import shutil
+
+POSTFIX = '_featherhelper'
 
 _dir = None
 _name = None
@@ -34,13 +37,6 @@ def name(name_: Union[str, int]='default'):
         _name = name_
     else:
         raise ValueError('Invalid name: {}'.format(name_))
-
-    cwd = p.join(_dir, _name)
-    if not p.isdir(cwd):
-        os.makedirs(cwd)
-    cwd = p.join(_dir, 'default')
-    if not p.isdir(cwd):
-        os.makedirs(cwd)
 
 
 def exc(*names: Union[str, int, None]):
@@ -74,6 +70,11 @@ def push(*data_frames: Union[np.ndarray, pd.DataFrame]):
     if _name is None:
         name()
 
+    cwd = p.join(_dir, _name + POSTFIX)
+    shutil.rmtree(cwd)
+    if not p.isdir(cwd):
+        os.makedirs(cwd)
+
     for i, df in enumerate(data_frames):
         if isinstance(df, np.ndarray):
             df = pd.DataFrame(df)
@@ -84,7 +85,7 @@ def push(*data_frames: Union[np.ndarray, pd.DataFrame]):
             raise ValueError('Unsupported input type. Only numpy.ndarray and pandas.DataFrame are supported.')
         if len(df.values.shape) > 2:
             raise ValueError('3D and multidimensional arrays are not supported.')
-        feather.write_dataframe(df, p.join(_dir, _name, str(i) + dot_ext))
+        feather.write_dataframe(df, p.join(cwd, str(i) + dot_ext))
         pass
     _name = 'default'
 
@@ -103,13 +104,16 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
         raise FeatherHelperError()
 
     cwd = p.join(_dir, _name)
+    if not p.isdir(cwd):
+        raise FeatherHelperError()
+
     file_names = sorted([p.basename(os.fsdecode(file))  # may be p.basename() is redundant
                          for file in os.listdir(os.fsencode(cwd))],
                         key=lambda filename: int(p.splitext(filename)[0]))
     ret = []
     for i, file_name in enumerate(file_names):
         if i != int(p.splitext(file_name)[0]):
-            raise FeatherHelperError('Wrong file name in {}'.format(cwd))
+            raise FeatherHelperError()
         dot_ext = p.splitext(file_name)[1]
         df = feather.read_dataframe(p.join(cwd, file_name))
         if dot_ext == '.np':
@@ -118,7 +122,7 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
             ret.append(df)
         else:
             raise FeatherHelperError()
-    if not ret or (len(ret) != ret_len and ret_len):
+    if (not ret) or (len(ret) != ret_len and ret_len):
         raise FeatherHelperError()
 
     _name = 'default'
