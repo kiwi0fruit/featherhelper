@@ -33,17 +33,19 @@ pip install featherhelper
 import pandas as pd
 import numpy as np
 import featherhelper as fh
-fh.setdir("~/feather/mydoc")  # optional
+fh.setdir("~/feather/mydoc")  # (optional)
+# fh.exc(1, 2)  # force raise exceptions for names (optional)
 
 # %%
-fh.name('id1')
+fh.name(1)  # can also be fh.name('id1'), default is 'default', 1 is the same as '1'
 try:
-    # raise Exception  # <- this is a switch
     df, A = fh.pull()  # control length can be set: fh.pull(N)
 except Exception as e:
-    print('push')  # calculate stuff:
+    # calculate stuff:
+    print('push')  
     df = pd.DataFrame(np.random.random(16).reshape(4, 4))
     A = df.values
+    #
     fh.push(df, A, e=e)
 
 print(df, '\n', A)
