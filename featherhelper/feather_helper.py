@@ -71,7 +71,8 @@ def push(*data_frames: Union[np.ndarray, pd.DataFrame]):
         name()
 
     cwd = p.join(_dir, _name + POSTFIX)
-    shutil.rmtree(cwd)
+    if p.isdir(cwd):
+        shutil.rmtree(cwd)
     if not p.isdir(cwd):
         os.makedirs(cwd)
 
