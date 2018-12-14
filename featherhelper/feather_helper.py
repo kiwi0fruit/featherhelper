@@ -78,14 +78,19 @@ def push(*data_frames: Union[np.ndarray, pd.DataFrame]):
 
     for i, df in enumerate(data_frames):
         if isinstance(df, np.ndarray):
-            df = pd.DataFrame(df)
-            dot_ext = '.np'
+            arr = df
+            if len(arr.shape) > 2:
+                s = arr.shape
+                arr = arr.view()
+                arr.shape = (np.prod(s[:-1]), s[-1])
+                dot_ext = '.{}.np'.format('_'.join(map(str, s)))
+            else:
+                dot_ext = '.np'
+            df = pd.DataFrame(arr)
         elif isinstance(df, pd.DataFrame):
             dot_ext = '.df'
         else:
             raise ValueError('Unsupported input type. Only numpy.ndarray and pandas.DataFrame are supported.')
-        if len(df.values.shape) > 2:
-            raise ValueError('3D and multidimensional arrays are not supported.')
         feather.write_dataframe(df, p.join(cwd, str(i) + dot_ext))
         pass
     _name = 'default'
@@ -110,15 +115,33 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
 
     file_names = sorted([p.basename(os.fsdecode(file))  # may be p.basename() is redundant
                          for file in os.listdir(os.fsencode(cwd))],
-                        key=lambda filename: int(p.splitext(filename)[0]))
+                        key=lambda filename: int(p.splitext(filename)[0].split('.')[0]))
     ret = []
     for i, file_name in enumerate(file_names):
-        if i != int(p.splitext(file_name)[0]):
+        num_shape, dot_ext = p.splitext(file_name)
+        num_shape = num_shape.split('.')
+        if i != int(num_shape[0]):
             raise FeatherHelperError()
-        dot_ext = p.splitext(file_name)[1]
+
+        shape = None
+        if len(num_shape) == 2:
+            try:
+                shape = tuple(map(int, num_shape[1].split('_')))
+                if len(shape) < 3:
+                    raise FeatherHelperError()
+            except ValueError:
+                raise FeatherHelperError()
+        else:
+            raise FeatherHelperError()
+
         df = feather.read_dataframe(p.join(cwd, file_name))
         if dot_ext == '.np':
-            ret.append(df.values)
+            if shape is None:
+                ret.append(df.values)
+            else:
+                v = df.values.view()
+                v.shape = shape
+                ret.append(v)
         elif dot_ext == '.df':
             ret.append(df)
         else:
