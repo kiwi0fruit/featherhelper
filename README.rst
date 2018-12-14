@@ -55,3 +55,18 @@ Usage example
        fh.push(df, A, B)
 
    print(df, '\n', A, '\n', B)
+
+A shorter example:
+
+.. code:: py
+
+   import numpy as np
+   import featherhelper as fh
+   # fh.exc()
+
+   # %%
+   try:
+       A = fh.pull()
+   except fh.Err:
+       A = np.random.random(16).reshape(4, 4)
+       fh.push(A)
