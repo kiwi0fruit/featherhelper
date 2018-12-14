@@ -16,7 +16,7 @@ Contents
 Install
 =======
 
-Via conda (should be ``"pip>=10.0.1"`` and ``"conda>=4.5.4"``):
+Via conda (should be ``"pip>=10.0.1"``):
 
 ::
 
@@ -44,13 +44,14 @@ Usage example
    fh.name(1)  # can also be fh.name('id1'), default is 'default', 1 is the same as '1'
    try:
        # raise fh.Err  # (optional)
-       df, A = fh.pull()  # control length can be set: fh.pull(N)
+       df, A, B = fh.pull()  # control length can be set: fh.pull(N)
    except fh.Err:
        # calculate:
        print('push')  
        df = pd.DataFrame(np.random.random(16).reshape(4, 4))
        A = df.values
+       B = np.random.random(16 * 3).reshape(4, 2, 2, 3)
        #
-       fh.push(df, A)
+       fh.push(df, A, B)
 
-   print(df, '\n', A)
+   print(df, '\n', A, '\n', B)
