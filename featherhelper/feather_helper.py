@@ -105,13 +105,13 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
         name()
 
     if _exc is None:
-        raise FeatherHelperError()
+        raise FeatherHelperError('forced exception for all')
     elif _name in _exc:
-        raise FeatherHelperError()
+        raise FeatherHelperError('forced exception for {} subfolder'.format(_name))
 
     cwd = p.join(_dir, _name + POSTFIX)
     if not p.isdir(cwd):
-        raise FeatherHelperError()
+        raise FeatherHelperError('dir "{}" was not found'.format(cwd))
 
     file_names = sorted([p.basename(os.fsdecode(file))  # may be p.basename() is redundant
                          for file in os.listdir(os.fsencode(cwd))],
@@ -120,19 +120,22 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
     for i, file_name in enumerate(file_names):
         num_shape, dot_ext = p.splitext(file_name)
         num_shape = num_shape.split('.')
-        if i != int(num_shape[0]):
-            raise FeatherHelperError()
+        num = int(num_shape[0])
+        if i != num:
+            raise FeatherHelperError('wrong file name: {}'.format(num))
 
         shape = None
-        if len(num_shape) == 2:
+        if len(num_shape) == 1:
+            pass
+        elif len(num_shape) == 2:
             try:
                 shape = tuple(map(int, num_shape[1].split('_')))
                 if len(shape) < 3:
-                    raise FeatherHelperError()
+                    raise FeatherHelperError('wrong array shape stored in the name: len(shape) < 3')
             except ValueError:
-                raise FeatherHelperError()
+                raise FeatherHelperError('wrong array shape stored in the name: {}'.format(num_shape[1]))
         else:
-            raise FeatherHelperError()
+            raise FeatherHelperError('file name contains more than two dots')
 
         df = feather.read_dataframe(p.join(cwd, file_name))
         if dot_ext == '.np':
@@ -145,9 +148,9 @@ def pull(ret_len: int=None) -> List[Union[np.ndarray, pd.DataFrame]] or np.ndarr
         elif dot_ext == '.df':
             ret.append(df)
         else:
-            raise FeatherHelperError()
+            raise FeatherHelperError('wrong file name ext: {}'.format(dot_ext))
     if (not ret) or (len(ret) != ret_len and ret_len):
-        raise FeatherHelperError()
+        raise FeatherHelperError('no *.np and *.df files in the subfolder or control sum mismatch')
 
     _name = 'default'
     return ret if (len(ret) > 1) else ret[0]
