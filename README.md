@@ -1,6 +1,6 @@
 # Feather Helper
 
-Feather Helper is a concise interface to cache numpy arrays and pandas dataframes. I use it with  [Pandoctools/Knitty](https://github.com/kiwi0fruit/pandoctools).
+Feather Helper is a concise interface to cache and load numpy arrays and pandas dataframes. I use it with  [Pandoctools/Knitty](https://github.com/kiwi0fruit/pandoctools).
 
 
 # Contents
