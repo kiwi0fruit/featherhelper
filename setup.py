@@ -13,7 +13,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
 
-    description='Feather Helper is a concise interface to cache 2D numpy arrays and pandas dataframes.',
+    description='Feather Helper is a concise interface to cache numpy arrays and pandas dataframes.',
     long_description=long_description,
 
     url='https://github.com/kiwi0fruit/featherhelper',
@@ -30,7 +30,6 @@ setup(
         'License :: OSI Approved :: MIT License',
 
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
 
