@@ -13,11 +13,10 @@ Feather Helper is a concise interface to cache and load numpy arrays and pandas 
 
 # Install
 
-Via conda (should be `"pip>=10.0.1"`):
+Via conda:
 
 ```
-conda install -c defaults -c conda-forge numpy pandas "feather-format>=0.4.0" "pyarrow>=0.11.1"
-pip install featherhelper
+conda install -c defaults -c conda-forge featherhelper
 ```
 
 Via pip:
